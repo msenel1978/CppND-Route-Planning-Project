@@ -88,13 +88,18 @@ RouteModel::Node *RoutePlanner::NextNode() {
     // Sort open_list	  
     std::sort(open_list.begin(), open_list.end(), Compare);
 
-    std::cout << "Sorted open_list:"; 
-    for (RouteModel::Node *node : open_list) {
-	  std::cout << node->h_value + node->g_value;
-    }
-    std::cout << "\n";
-    
+    // TODO: Add a #ifdef DEBUG / DEBUG_TEST macro
+    if ( 1 ) {
+	  // Print the sorted list for DEBUG
+	  std::cout << "Sorted open_list:"; 
+	  for (RouteModel::Node *node : open_list) 
+		std::cout << node->h_value + node->g_value;
+	  std::cout << "\n";
+    }   
+    // The node with the lowest g + h should be at the end
+    // of sorted open_list
     min_node = open_list.back();
+    // Remove the node from sorted open_list
     open_list.pop_back();
 
     return min_node;
