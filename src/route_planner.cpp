@@ -1,4 +1,5 @@
 #include "route_planner.h"
+#include "debug.h"
 #include <algorithm>
 
 /**
@@ -8,8 +9,9 @@ bool Compare(const RouteModel::Node *node1, RouteModel::Node *node2) {
     float f1 = node1->h_value + node1->g_value; // node1: h + g
     float f2 = node2->h_value + node2->g_value; // node2: h + g
     
-    return f1 > f2; 
+    return f1 > f2;
 }
+
 
 RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y,\
 				    float end_x, float end_y): m_Model(model) {
@@ -34,7 +36,6 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y,\
 // - You can use the distance to the end_node for the h value.
 // - Node objects have a distance method to determine the distance to another
 // node.
-
 float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
     return(node->distance(*end_node));	
 }
@@ -67,39 +68,37 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 
         // Add the neighbor to open_list
         open_list.push_back(neighbor);
-        // Set the node's visited attribute to true
-        neighbor->visited = true;
-    }
 
+	  // Set the node's visited attribute to true
+	  neighbor->visited = true;
+    }
 }
 
 
-// TODO 5: Complete the NextNode method to sort the open list and return the
+// DONE 5: Complete the NextNode method to sort the open list and return the
 // next node.
 // Tips:
 // - Sort the open_list according to the sum of the h value and g value.
 // - Create a pointer to the node in the list with the lowest sum.
 // - Remove that node from the open_list.
 // - Return the pointer.
-// TODO: This might be worong
 RouteModel::Node *RoutePlanner::NextNode() {
     RouteModel::Node *min_node;
 
     // Sort open_list	  
     std::sort(open_list.begin(), open_list.end(), Compare);
 
-    // TODO: Add a #ifdef DEBUG / DEBUG_TEST macro
-    if (0) {
-	  // Print the sorted list for DEBUG
-	  std::cout << "Sorted open_list:"; 
-	  for (RouteModel::Node *node : open_list) 
-		std::cout << node->h_value + node->g_value << " ";
-    }   
+#ifdef DEBUG_BUILD
+    // Print the sorted list for DEBUG
+    std::cout << "Sorted open_list:";
+    for (RouteModel::Node *node : open_list)
+	  std::cout << node->h_value + node->g_value << " ";
+#endif
+
     // The node with the lowest g + h should be at the end
     // of sorted open_list
     min_node = open_list.back();
-    if (0)
-	  std::cout << "min_node:" << min_node->h_value + min_node->g_value <<"\n";
+    DEBUG("min_node: %f\n", min_node->h_value + min_node->g_value);
 
     // Remove the node from sorted open_list
     open_list.pop_back();
@@ -162,6 +161,8 @@ void RoutePlanner::AStarSearch() {
 
     // DONE: Implement your solution here.
     current_node = start_node;
+    // Make sure start_node is visited
+    current_node->visited = true;
 
     // - Use the AddNeighbors method to add all of the neighbors of the current 
     //   node to the open_list.
