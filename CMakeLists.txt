@@ -20,6 +20,9 @@ find_package(GraphicsMagick)
 set(IO2D_WITHOUT_SAMPLES 1)
 set(IO2D_WITHOUT_TESTS 1)
 
+# Set DEBUG flag
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_BUILD")
+
 # Add the pugixml and GoogleTest library subdirectories
 add_subdirectory(thirdparty/pugixml)
 add_subdirectory(thirdparty/googletest)

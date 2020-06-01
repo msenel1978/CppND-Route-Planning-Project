@@ -2,6 +2,12 @@
 #include "debug.h"
 #include <algorithm>
 
+
+#ifdef DEBUG_BUILD
+// Count the number of iterations for DEBUG
+static int debug_iteration = 0;
+#endif
+
 /**
  ** Compare h + g values of two cells.
  */
@@ -90,7 +96,7 @@ RouteModel::Node *RoutePlanner::NextNode() {
 
 #ifdef DEBUG_BUILD
     // Print the sorted list for DEBUG
-    std::cout << "Sorted open_list:";
+    std::cout << "\nSorted open_list - Iteration " << debug_iteration ++ <<": ";
     for (RouteModel::Node *node : open_list)
 	  std::cout << node->h_value + node->g_value << " ";
 #endif
@@ -98,7 +104,7 @@ RouteModel::Node *RoutePlanner::NextNode() {
     // The node with the lowest g + h should be at the end
     // of sorted open_list
     min_node = open_list.back();
-    DEBUG("min_node: %f\n", min_node->h_value + min_node->g_value);
+    DEBUG("\n#####\nmin_node: %f\n", min_node->h_value + min_node->g_value);
 
     // Remove the node from sorted open_list
     open_list.pop_back();
